@@ -1,5 +1,9 @@
 const { Router } = require('express')
-const { createUsuario } = require('../respositories/usuarios.repositories')
+const {
+  createUsuario,
+  updateUsuarioCpf,
+  findUsuarioById
+} = require('../respositories/usuarios.repositories')
 
 const router = Router()
 
@@ -33,7 +37,49 @@ router.post('/', async function (req, res) {
   }
 })
 
-// PUT /api
+// PUT /api/usuarios
+
+// PATCH /api/usuarios/:id/cpf
+router.patch('/:id/cpf', async function (req, res) {
+  const usuarioId = getIdUsuario(req.params)
+
+  if (!usuarioId) {
+    return res.status(400).json({ message: 'ID de usuário inválido.' })
+  }
+
+  const { cpf } = req.body
+
+  if (!cpf) {
+    return res.status(400).json({ message: 'CPF é obrigatório.' })
+  }
+
+  try {
+    const result = await updateUsuarioCpf(usuarioId, cpf)
+    if (!result) {
+      return res.status(404).json({ message: 'Usuário não encontrado.' })
+    }
+    const usuario = await findUsuarioById(result.id_usuario)
+    return res.status(200).json(usuario)
+  } catch (error) {
+    if (error && error.code === '23505') {
+      return res
+        .status(409)
+        .json({ message: 'Já existe um usuário com o CPF informado.' })
+    } else {
+      return res.status(500).json({ message: error.message })
+    }
+  }
+})
+
+function getIdUsuario(params) {
+  const usuarioId = Number(params.id)
+
+  if (!Number.isInteger(usuarioId) || usuarioId <= 0) {
+    return null
+  }
+
+  return usuarioId
+}
 
 // DELETE /api
 
@@ -42,12 +88,20 @@ router.post('/', async function (req, res) {
 module.exports = router
 
 /*
-------------------------------
-POST /api/usuarios 
-------------------------------
-curl -X POST http://localhost:3000/api \
+-----------------------------------
+  POST /api/usuarios 
+-----------------------------------
+curl -X POST http://localhost:3000/api/usuarios \
 -H "Content-Type: application/json" \
 -d '{"nome":"Pedro","cpf":"11122233300","email":"pedro@teste.com","senha":"123456"}' 
-------------------------------
+-----------------------------------
+
+-----------------------------------
+  PATCH /api/usuarios/:id/cpf
+-----------------------------------
+curl -X PATCH http://localhost:3000/api/usuarios/18/cpf \
+-H "Content-Type: application/json" \
+-d '{"cpf":"11122233344"}'
+-----------------------------------
 
 */

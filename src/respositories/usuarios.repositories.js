@@ -87,6 +87,29 @@ async function createUsuario(nome, cpf, email, senha) {
   }
 }
 
+async function updateUsuarioCpf(UsuarioId, cpf) {
+  const result = await pool.query(
+    `UPDATE usuarios 
+      SET cpf = $1 
+      WHERE id_usuario = $2
+      RETURNING id_usuario`,
+    [cpf, UsuarioId]
+  )
+  return result.rows[0] || null
+}
+
+async function findUsuarioById(usuarioId) {
+  const result = await pool.query(
+    `SELECT id_usuario, nome, email, cpf 
+      FROM usuarios 
+      WHERE id_usuario = $1`,
+    [usuarioId]
+  )
+  return result.rows[0] || null
+}
+
 module.exports = {
-  createUsuario
+  createUsuario,
+  updateUsuarioCpf,
+  findUsuarioById
 }
