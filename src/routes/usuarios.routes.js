@@ -10,12 +10,21 @@ router.post('/', async function (req, res) {
   if (!nome || !cpf || !email || !senha) {
     return res
       .status(400)
-      .json({ message: 'Nome, CPF, e-mail e senha são obrigatórios' })
+      .json({ message: 'Nome, CPF, e-mail e senha são obrigatórios.' })
   }
 
-  const result = await createUsuario(nome, cpf, email, senha)
-
-  res.send(result)
+  try {
+    const result = await createUsuario(nome, cpf, email, senha)
+    res.send(result)
+  } catch (error) {
+    if (error && error.code === '23505') {
+      return res
+        .status(409)
+        .json({ message: 'Já existe um usuário com os dados informados.' })
+    } else {
+      return res.status(500).json({ message: error.message })
+    }
+  }
 })
 
 // PUT /api
