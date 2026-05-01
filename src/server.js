@@ -1,7 +1,7 @@
 const dotenv = require('dotenv')
 const express = require('express')
 const path = require('path')
-const router = require('./routes/usuarios.routes')
+const router = require('./routes')
 
 dotenv.config({
   quiet: true,
