@@ -3,7 +3,11 @@ const {
   findProximaQuestaoByUsuario,
   findQuestaoDoExameByUsuario,
   findRespostaByExameEQuestao,
-  inserirRespostaQuestao
+  inserirRespostaQuestao,
+  usuarioConcluiuModuloAtual,
+  findModuloAtualByUsuario,
+  findOutroGrupoAleatorio,
+  updateProximaTentativa
 } = require('../respositories/questoes.repositories')
 const authMiddleware = require('../middlewares/auth.middleware')
 
@@ -76,6 +80,66 @@ router.post('/responder', authMiddleware, async function (req, res) {
     )
 
     return res.status(201).json(respostaInserida)
+  } catch (error) {
+    return res.status(500).json({ message: error.message })
+  }
+})
+
+/* 
+-----------------------------------
+  PATCH /api/questoes/proxima-tentativa
+-----------------------------------
+curl -X PATCH http://localhost:3000/api/questoes/proxima-tentativa \ 
+  -H "Authorization: Bearer SEU_TOKEN" 
+-----------------------------------
+*/
+router.patch('/proxima-tentativa', authMiddleware, async function (req, res) {
+  try {
+    const concluido = await usuarioConcluiuModuloAtual(req.usuario.id_usuario)
+    if (!concluido) {
+      return res.status(409).json({
+        message: 'Você ainda não concluiu todas as questões do módulo atual.'
+      })
+    }
+
+    const modulo = await findModuloAtualByUsuario(req.usuario.id_usuario)
+
+    if (!modulo) {
+      return res.status(404).json({
+        message: 'Módulo atual não encontrado.'
+      })
+    }
+
+    if (modulo.tentativa >= 2) {
+      return res.status(409).json({
+        message: 'Limite de 2 tentativas atingido.'
+      })
+    }
+
+    const grupo = await findOutroGrupoAleatorio(
+      req.usuario.id_usuario,
+      modulo.id_modulo
+    )
+
+    if (!grupo) {
+      return res.status(404).json({
+        message: 'Nenhum grupo alternativo disponível para este módulo.'
+      })
+    }
+
+    const exame = await updateProximaTentativa(
+      modulo.id_exame,
+      grupo,
+      modulo.tentativa + 1
+    )
+
+    if (!exame) {
+      return res.status(404).json({
+        message: 'Exame não encontrado para atualização.'
+      })
+    }
+
+    return res.status(200).json(exame)
   } catch (error) {
     return res.status(500).json({ message: error.message })
   }

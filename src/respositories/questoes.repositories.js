@@ -95,9 +95,104 @@ async function inserirRespostaQuestao(id_exame, id_questao, resposta, nota) {
   return result.rows[0] || null
 }
 
+async function usuarioConcluiuModuloAtual(usuarioId) {
+  const result = await pool.query(
+    `
+      WITH exame_atual AS ( 
+        SELECT id_exame, id_modulo, grupo 
+        FROM exames 
+        WHERE id_usuario = $1 
+        ORDER BY id_exame DESC 
+        LIMIT 1 
+      ) 
+      SELECT NOT EXISTS ( 
+        SELECT 1 
+        FROM exame_atual e 
+        INNER JOIN questoes q
+          ON q.id_modulo = e.id_modulo 
+        AND q.grupo IS NOT DISTINCT FROM e.grupo
+        WHERE NOT EXISTS (
+          SELECT 1 
+          FROM respostas r 
+          WHERE r.id_exame = e.id_exame 
+            AND r.id_questao = q.id_questao 
+        ) 
+      ) AS concluido
+    `,
+    [usuarioId]
+  )
+  return result.rows[0]?.concluido || false
+}
+
+async function findModuloAtualByUsuario(usuarioId) {
+  const result = await pool.query(
+    `
+      SELECT 
+        e.id_exame, 
+        e.id_modulo, 
+        m.titulo,
+        e.grupo, 
+        e.tentativa
+      FROM exames e 
+      INNER JOIN modulos m 
+        ON m.id_modulo = e.id_modulo 
+      WHERE e.id_usuario = $1 
+      ORDER BY e.id_exame DESC 
+      LIMIT 1
+    `,
+    [usuarioId]
+  )
+  return result.rows[0] || null
+}
+
+async function findOutroGrupoAleatorio(usuarioId, moduloId) {
+  const result = await pool.query(
+    `
+      SELECT q.grupo 
+      FROM questoes q
+      WHERE q.id_modulo = $1 
+        AND q.grupo IS NOT NULL
+        AND q.grupo NOT IN (
+          SELECT e.grupo 
+          FROM exames e 
+          WHERE e.id_usuario = $2 
+            AND e.id_modulo = $1
+        )
+      GROUP BY q.grupo 
+      ORDER BY RANDOM() 
+      LIMIT 1
+    `,
+    [moduloId, usuarioId]
+  )
+  return result.rows[0]?.grupo || null
+}
+
+async function updateProximaTentativa(idExame, grupo, tentativa) {
+  const result = await pool.query(
+    `
+      UPDATE exames 
+      SET 
+        grupo = $1, 
+        tentativa = $2 
+      WHERE id_exame = $3 
+      RETURNING 
+        id_exame, 
+        id_modulo, 
+        grupo, 
+        tentativa
+    `,
+    [grupo, tentativa, idExame]
+  )
+  return result.rows[0] || null
+}
+
 module.exports = {
   findProximaQuestaoByUsuario,
   findQuestaoDoExameByUsuario,
   findRespostaByExameEQuestao,
-  inserirRespostaQuestao
+  inserirRespostaQuestao,
+  usuarioConcluiuModuloAtual,
+  findModuloAtualByUsuario,
+  findOutroGrupoAleatorio,
+  updateProximaTentativa
 }
