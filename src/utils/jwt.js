@@ -13,6 +13,11 @@ function createToken(payload) {
   })
 }
 
+function verfifyToken(token) {
+  return jwt.verify(token, process.env.JWT_SECRET)
+}
+
 module.exports = {
-  createToken
+  createToken,
+  verfifyToken
 }

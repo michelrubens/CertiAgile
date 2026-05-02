@@ -24,7 +24,7 @@ router.post('/login', async function (req, res) {
 
   try {
     const usuario = await findUsuarioByCpfAndSenha(cpf, senha)
-    const token = createToken({ usuario_id: usuario.usuario_id })
+    const token = createToken({ id_usuario: usuario.id_usuario })
     return res.status(200).json({
       token,
       nome: usuario.nome

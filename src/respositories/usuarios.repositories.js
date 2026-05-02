@@ -74,7 +74,7 @@ async function createUsuario(nome, cpf, email, senha) {
     await client.query('COMMIT')
 
     return {
-      usuario_id: usuario.id_usuario,
+      id_usuario: usuario.id_usuario,
       nome: usuario.nome,
       email: usuario.email,
       cpf: usuario.cpf
@@ -127,7 +127,7 @@ async function findUsuarioByCpfAndSenha(cpf, senha) {
   }
 
   return {
-    usuarioId: usuario.id_usuario,
+    id_usuario: usuario.id_usuario,
     nome: usuario.nome,
     email: usuario.email,
     cpf: usuario.cpf
