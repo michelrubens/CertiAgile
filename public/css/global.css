@@ -1,0 +1,419 @@
+/* ── 1. Tokens do Design System ── */
+:root {
+  /* Cores */
+  --color-primary: #10b981;
+  --color-cta-blue: #2563eb;
+  --color-cta-blue-hover: #1d4ed8;
+  --color-secondary: #64748b;
+  --color-background: #f8f9ff;
+  --color-surface: #ffffff;
+  --color-heading: #0f172a;
+  --color-on-surface: #0f172a;
+  --color-on-surface-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-placeholder: #94a3b8;
+
+  /* Espaçamentos */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+
+  /* Sombras */
+  --shadow-flat: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-active: 0 10px 15px rgba(16, 185, 129, 0.15);
+
+  /* Tipografia */
+  --font: 'Inter', sans-serif;
+}
+
+/* ── 2. Reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: var(--font);
+  font-size: 1rem;
+  color: var(--color-on-surface);
+  background: var(--color-background);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+label {
+  font-family: inherit;
+}
+
+/* ── 3. Componentes globais ── */
+/* (header, footer, brand, material icons, botões base...) */
+
+/* ── Material Symbols ───────────────────────────────────── */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-flat);
+  height: 64px;
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.logo {
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--color-heading);
+}
+.logo-agile {
+  color: var(--color-cta-blue);
+}
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-secondary);
+  transition: color 0.2s;
+}
+.nav-link:hover {
+  color: var(--color-primary);
+}
+
+/* ── Main ───────────────────────────────────────────────── */
+main {
+  flex: 1;
+  padding: 96px 1rem 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-grid {
+  width: 100%;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+/* ── Left panel ─────────────────────────────────────────── */
+.left-panel {
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.left-panel h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-heading);
+  max-width: 420px;
+}
+.left-panel p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  max-width: 420px;
+}
+.hero-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-active);
+  border: 4px solid #fff;
+}
+.hero-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero-image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.1), transparent);
+}
+
+/* ── Card / Form ─────────────────────────────────────────── */
+.card-wrap {
+  display: flex;
+  justify-content: center;
+}
+.card {
+  width: 100%;
+  max-width: 448px;
+  background: var(--color-surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-flat);
+}
+.card-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.card-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  margin-bottom: 4px;
+}
+.card-header p {
+  color: var(--color-secondary);
+}
+
+/* ── Form ────────────────────────────────────────────────── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-muted);
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'] {
+  width: 100%;
+  padding: 12px 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--color-on-surface);
+  background: var(--color-surface);
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+input::placeholder {
+  color: var(--color-placeholder);
+}
+input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.password-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.625rem;
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+.password-hint .material-symbols-outlined {
+  font-size: 12px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+.terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+}
+.terms input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+.terms label {
+  font-size: 0.8rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.5;
+  color: var(--color-secondary);
+  cursor: pointer;
+}
+.terms label a {
+  color: var(--color-primary);
+}
+.terms label a:hover {
+  text-decoration: underline;
+}
+
+.btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 1rem;
+  background: var(--color-cta-blue);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.1s;
+  box-shadow: var(--shadow-flat);
+}
+.btn-submit:hover {
+  background: var(--color-cta-blue-hover);
+}
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+.card-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-light);
+  text-align: center;
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+}
+.card-footer a {
+  color: var(--color-cta-blue);
+  font-weight: 700;
+}
+.card-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer {
+  background: #f8fafc;
+  border-top: 1px solid var(--color-border);
+  padding: 2rem 1rem;
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.footer-brand {
+  font-weight: 700;
+  color: var(--color-heading);
+}
+.footer-copy {
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+}
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.footer-links a {
+  font-size: 0.75rem;
+  color: var(--color-secondary);
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .page-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .left-panel {
+    display: flex;
+  }
+  .card-wrap {
+    justify-content: flex-end;
+  }
+  .footer-inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

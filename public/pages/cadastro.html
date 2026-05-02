@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CertiAgile — Cadastro</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/cadastro.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/" class="brand">
+          <svg
+            width="32"
+            height="32"
+            viewBox="20 25 90 90"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <rect x="20" y="25" width="90" height="90" rx="22" fill="#2563EB" />
+            <path
+              d="M45 72L62 88L88 52"
+              stroke="white"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M62 88L92 58"
+              stroke="#10B981"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="logo">Certi<span class="logo-agile">Agile</span></span>
+        </a>
+        <a href="#" class="nav-link">Ajuda</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="page-grid">
+        <!-- Esquerda: identidade -->
+        <div class="left-panel">
+          <span class="badge">Metodologia Ágil</span>
+          <h1>Domine o framework Scrum na prática.</h1>
+          <p>
+            Teste seus conhecimentos em 5 níveis de dificuldade, do básico ao
+            avançado, e tenha uma certificação ao final da experiência.
+          </p>
+          <div class="hero-image-wrap">
+            <img
+              src="../assets/images/ciclo_scrum.png"
+              alt="Ambiente de trabalho ágil e colaborativo"
+            />
+          </div>
+        </div>
+
+        <!-- Direita: formulário -->
+        <div class="card-wrap">
+          <div class="card">
+            <div class="card-header">
+              <h2>Crie sua conta</h2>
+              <p>Preencha os dados para iniciar sua jornada.</p>
+            </div>
+
+            <form id="form-cadastro" novalidate>
+              <div class="field">
+                <label for="name">
+                  <span class="material-symbols-outlined">person</span>
+                  Nome Completo
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Ex: João Silva"
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="field">
+                <label for="cpf">
+                  <span class="material-symbols-outlined">badge</span>
+                  CPF
+                </label>
+                <input
+                  type="text"
+                  id="cpf"
+                  placeholder="000.000.000-00"
+                  autocomplete="off"
+                  maxlength="14"
+                />
+              </div>
+
+              <div class="field">
+                <label for="email">
+                  <span class="material-symbols-outlined">mail</span>
+                  E-mail
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="nome@exemplo.com"
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="password">
+                    <span class="material-symbols-outlined">lock</span>
+                    Senha
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="••••••••"
+                    autocomplete="new-password"
+                  />
+                  <span class="password-hint">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Senha forte
+                  </span>
+                </div>
+                <div class="field">
+                  <label for="confirm-password">
+                    <span class="material-symbols-outlined"
+                      >enhanced_encryption</span
+                    >
+                    Confirmar
+                  </label>
+                  <input
+                    type="password"
+                    id="confirm-password"
+                    placeholder="••••••••"
+                    autocomplete="new-password"
+                  />
+                </div>
+              </div>
+
+              <div class="terms">
+                <input type="checkbox" id="terms" />
+                <label for="terms">
+                  Ao me cadastrar, concordo com os
+                  <a href="#">Termos de Uso</a> e a
+                  <a href="#">Política de Privacidade</a>.
+                </label>
+              </div>
+
+              <button type="submit" class="btn-submit">
+                Cadastrar
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </form>
+
+            <div class="card-footer">
+              Já possui uma conta? <a href="login.html">Acesse o Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div>
+          <p class="footer-brand">CertiAgile</p>
+          <p class="footer-copy">
+            © 2026 CertiAgile. O portal das certificações ágeis.
+          </p>
+        </div>
+        <nav class="footer-links">
+          <a href="#">Termos de Uso</a>
+          <a href="#">Privacidade</a>
+          <a href="#">Suporte</a>
+          <a href="#">Sobre</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="/js/cadastro.js"></script>
+  </body>
+</html>
