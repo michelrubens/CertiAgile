@@ -51,20 +51,16 @@ router.post('/', async function (req, res) {
 
 /*
 -----------------------------------
-  PATCH /api/usuarios/:id/cpf
+  PATCH /api/usuarios/cpf
 -----------------------------------
-curl -X PATCH http://localhost:3000/api/usuarios/18/cpf \
+curl -X PATCH http://localhost:3000/api/usuarios/cpf \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer SEU_TOKEN" \
 -d '{"cpf":"11122233344"}'
 -----------------------------------
 */
-router.patch('/:id/cpf', authMiddleware, async function (req, res) {
-  const usuarioId = getIdUsuario(req.params)
-
-  if (!usuarioId) {
-    return res.status(400).json({ message: 'ID de usuário inválido.' })
-  }
+router.patch('/cpf', authMiddleware, async function (req, res) {
+  const usuarioId = req.usuario.id_usuario
 
   const { cpf } = req.body
 
@@ -123,20 +119,16 @@ router.patch('/nome', authMiddleware, async function (req, res) {
 
 /*
 -----------------------------------
-  PATCH /api/usuarios/:id/email
+  PATCH /api/usuarios/email
 -----------------------------------
-curl -X PATCH http://localhost:3000/api/usuarios/18/email \
+curl -X PATCH http://localhost:3000/api/usuarios/email \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer SEU_TOKEN" \
 -d '{"email":"anna@test.com"}'
 -----------------------------------
 */
-router.patch('/:id/email', authMiddleware, async function (req, res) {
-  const usuarioId = getIdUsuario(req.params)
-
-  if (!usuarioId) {
-    return res.status(400).json({ message: 'ID de usuário inválido.' })
-  }
+router.patch('/email', authMiddleware, async function (req, res) {
+  const usuarioId = req.usuario.id_usuario
 
   const { email } = req.body
 
@@ -164,20 +156,16 @@ router.patch('/:id/email', authMiddleware, async function (req, res) {
 
 /*
 -----------------------------------
-  PATCH /api/usuarios/:id/senha
+  PATCH /api/usuarios/senha
 -----------------------------------
-curl -X PATCH http://localhost:3000/api/usuarios/18/senha \
+curl -X PATCH http://localhost:3000/api/usuarios/senha \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer SEU_TOKEN" \
 -d '{"senha":"11111"}'
 -----------------------------------
 */
-router.patch('/:id/senha', authMiddleware, async function (req, res) {
-  const usuarioId = getIdUsuario(req.params)
-
-  if (!usuarioId) {
-    return res.status(400).json({ message: 'ID de usuário inválido.' })
-  }
+router.patch('/senha', authMiddleware, async function (req, res) {
+  const usuarioId = req.usuario.id_usuario
 
   const { senha } = req.body
 
