@@ -2,6 +2,7 @@ const { Router } = require('express')
 const {
   findUsuarioByCpfAndSenha
 } = require('../respositories/usuarios.repositories')
+const { createToken } = require('../utils/jwt')
 
 const router = Router()
 
@@ -22,8 +23,12 @@ router.post('/login', async function (req, res) {
   }
 
   try {
-    const result = await findUsuarioByCpfAndSenha(cpf, senha)
-    return res.status(200).json(result)
+    const usuario = await findUsuarioByCpfAndSenha(cpf, senha)
+    const token = createToken({ usuario_id: usuario.usuario_id })
+    return res.status(200).json({
+      token,
+      nome: usuario.nome
+    })
   } catch (error) {
     return res.status(500).json({ message: error.message })
   }
