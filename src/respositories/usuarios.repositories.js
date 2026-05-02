@@ -1,6 +1,6 @@
 const pool = require('../database/db')
 const { randomBytes } = require('crypto')
-const { hashPassword } = require('../utils/password')
+const { hashPassword, verifyPassword } = require('../utils/password')
 
 async function insertUsuario(client, nome, cpf, email, senha) {
   const certificadoHash = randomBytes(24).toString('hex')
@@ -108,6 +108,32 @@ async function findUsuarioById(usuarioId) {
   return result.rows[0] || null
 }
 
+async function findUsuarioByCpfAndSenha(cpf, senha) {
+  const result = await pool.query(
+    `SELECT id_usuario, nome, email, cpf, senha
+      FROM usuarios 
+      WHERE cpf = $1`,
+    [cpf]
+  )
+  const usuario = result.rows[0]
+
+  if (!usuario) {
+    throw new Error('Usuário não encontrado.')
+  }
+
+  const senhaValida = verifyPassword(senha, usuario.senha)
+  if (!senhaValida) {
+    throw new Error('Senha inválida.')
+  }
+
+  return {
+    usuarioId: usuario.id_usuario,
+    nome: usuario.nome,
+    email: usuario.email,
+    cpf: usuario.cpf
+  }
+}
+
 async function updateUsuarioNome(usuarioId, nome) {
   const result = await pool.query(
     `UPDATE usuarios 
@@ -147,6 +173,7 @@ module.exports = {
   createUsuario,
   updateUsuarioCpf,
   findUsuarioById,
+  findUsuarioByCpfAndSenha,
   updateUsuarioNome,
   updateUsuarioEmail,
   updateUsuarioSenha
