@@ -94,6 +94,14 @@ O servidor estará disponível em `http://localhost:3000`.
 
 ## 🔌 API Endpoints
 
+### Navegação (Web)
+
+Rotas principais para acessar a interface da aplicação:
+
+- `/login` - Tela de autenticação de usuários.
+- `/cadastro` - Tela de criação de novas contas.
+- `/painel` - Área logada para realização de avaliações e acompanhamento.
+
 ### Autenticação
 
 - `POST /api/auth/login` - Realiza login e retorna o token JWT.
@@ -110,6 +118,8 @@ O servidor estará disponível em `http://localhost:3000`.
 
 - `GET /api/questoes/proxima-questao` - Busca a próxima questão pendente do questionário (Requer Token).
 - `POST /api/questoes/responder` - Registra a resposta de uma questão (Requer Token).
+- `PATCH /api/questoes/proxima-tentativa` - Reinicia o grupo de questões para uma nova tentativa no módulo atual (Requer Token).
+- `PATCH /api/questoes/proximo-modulo` - Atualiza o progresso do usuário para o próximo nível de certificação (Requer Token).
 
 ## 📂 Estrutura de Pastas
 
