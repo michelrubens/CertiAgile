@@ -239,10 +239,14 @@ async function findExamesByUsuario(usuarioId) {
     `
     SELECT 
       e.id_modulo AS nivel,
-      MAX(e.tentativa) AS tentativas_usadas,
+      CASE 
+        WHEN COUNT(r.id_resposta) > 0 THEN e.tentativa
+        ELSE e.tentativa - 1
+      END AS tentativas_usadas,
       COALESCE(MAX(score.pct), 0) AS melhor_nota,
       CASE WHEN COALESCE(MAX(score.pct), 0) >= 70 THEN true ELSE false END AS aprovado
     FROM exames e
+    LEFT JOIN respostas r ON r.id_exame = e.id_exame
     LEFT JOIN (
       SELECT 
         r.id_exame, 
@@ -251,12 +255,25 @@ async function findExamesByUsuario(usuarioId) {
       GROUP BY r.id_exame
     ) score ON score.id_exame = e.id_exame
     WHERE e.id_usuario = $1
-    GROUP BY e.id_modulo
+    GROUP BY e.id_modulo, e.id_exame, e.tentativa
     ORDER BY e.id_modulo
     `,
     [usuarioId]
   )
   return result.rows
+}
+
+async function countQuestoesRespondidasByUsuario(usuarioId) {
+  const result = await pool.query(
+    `
+    SELECT COUNT(DISTINCT r.id_questao) as total
+    FROM respostas r
+    INNER JOIN exames e ON e.id_exame = r.id_exame
+    WHERE e.id_usuario = $1
+    `,
+    [usuarioId]
+  )
+  return Number(result.rows[0]?.total ?? 0)
 }
 
 module.exports = {
@@ -270,5 +287,6 @@ module.exports = {
   updateProximaTentativa,
   findProximoModuloByUsuario,
   updateProximoModulo,
-  findExamesByUsuario
+  findExamesByUsuario,
+  countQuestoesRespondidasByUsuario
 }

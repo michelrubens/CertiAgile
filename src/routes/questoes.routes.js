@@ -9,7 +9,8 @@ const {
   findOutroGrupoAleatorio,
   updateProximaTentativa,
   findProximoModuloByUsuario,
-  updateProximoModulo
+  updateProximoModulo,
+  countQuestoesRespondidasByUsuario
 } = require('../respositories/questoes.repositories')
 const authMiddleware = require('../middlewares/auth.middleware')
 
@@ -205,6 +206,21 @@ router.patch('/proximo-modulo', authMiddleware, async function (req, res) {
   } catch (error) {
     return res.status(500).json({ message: error.message })
   }
+})
+
+/*
+------------------------------------------
+  GET /api/questoes/progresso
+------------------------------------------
+curl -X GET http://localhost:3000/api/questoes/progresso \
+  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Content-Type: application/json"
+------------------------------------------
+*/
+
+router.get('/progresso', authMiddleware, async function (req, res) {
+  const total = await countQuestoesRespondidasByUsuario(req.usuario.id_usuario)
+  return res.status(200).json({ respondidas: total, total: 50 })
 })
 
 module.exports = router

@@ -336,6 +336,22 @@ body {
   letter-spacing: 0.08em;
   color: var(--color-secondary);
 }
+.tentativas-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 6px;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  background: var(--color-border);
+  transition: background 0.3s;
+}
+.dot.usada {
+  background: var(--color-primary);
+}
 
 /* Progress card */
 .progress-card {
