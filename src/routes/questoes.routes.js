@@ -7,9 +7,9 @@ const {
   usuarioConcluiuModuloAtual,
   findModuloAtualByUsuario,
   findOutroGrupoAleatorio,
-  updateProximaTentativa,
+  insertProximaTentativa,
   findProximoModuloByUsuario,
-  updateProximoModulo,
+  insertProximoModulo,
   countQuestoesRespondidasByUsuario
 } = require('../respositories/questoes.repositories')
 const authMiddleware = require('../middlewares/auth.middleware')
@@ -73,6 +73,7 @@ router.post('/responder', authMiddleware, async function (req, res) {
     if (respostaExistente) {
       return res.status(409).json({ message: 'Resposta já registrada.' })
     }
+
     const nota = questao.alternativa_correta === respostaNormalizada ? 1 : 0
 
     const respostaInserida = await inserirRespostaQuestao(
@@ -82,7 +83,60 @@ router.post('/responder', authMiddleware, async function (req, res) {
       nota
     )
 
-    return res.status(201).json(respostaInserida)
+    // Verifica se concluiu o módulo atual
+    const concluido = await usuarioConcluiuModuloAtual(req.usuario.id_usuario)
+
+    let proximoEstado = null
+
+    if (concluido) {
+      const moduloAtual = await findModuloAtualByUsuario(req.usuario.id_usuario)
+
+      // Verifica se ainda tem tentativa disponível neste módulo
+      const tentativasUsadas = moduloAtual.tentativa
+      const temTentativaDisponivel = tentativasUsadas < 2
+
+      if (temTentativaDisponivel) {
+        // Não avança automaticamente — usuário pode querer usar a 2ª tentativa
+        proximoEstado = {
+          status: 'modulo_concluido',
+          pode_tentar_novamente: true
+        }
+      } else {
+        // Usou as 2 tentativas — avança para o próximo módulo automaticamente
+        const proximoModulo = await findProximoModuloByUsuario(
+          req.usuario.id_usuario
+        )
+
+        if (proximoModulo) {
+          const grupo = await findOutroGrupoAleatorio(
+            req.usuario.id_usuario,
+            proximoModulo
+          )
+
+          if (!grupo) {
+            return res.status(500).json({
+              message: 'Nenhum grupo disponível para o próximo módulo.'
+            })
+          }
+
+          await insertProximoModulo(
+            moduloAtual.id_exame,
+            proximoModulo,
+            grupo,
+            1
+          )
+          proximoEstado = { status: 'proximo_modulo_desbloqueado' }
+        } else {
+          // Não há próximo módulo — concluiu todos os 5 níveis
+          proximoEstado = { status: 'todos_modulos_concluidos' }
+        }
+      }
+    }
+
+    return res.status(201).json({
+      ...respostaInserida,
+      proximo_estado: proximoEstado
+    })
   } catch (error) {
     return res.status(500).json({ message: error.message })
   }
@@ -130,7 +184,7 @@ router.patch('/proxima-tentativa', authMiddleware, async function (req, res) {
       })
     }
 
-    const exame = await updateProximaTentativa(
+    const exame = await insertProximaTentativa(
       modulo.id_exame,
       grupo,
       modulo.tentativa + 1
@@ -148,7 +202,7 @@ router.patch('/proxima-tentativa', authMiddleware, async function (req, res) {
   }
 })
 
-/* 
+/* >>>>> NÃO ESQUECER DE REMOVER ESTA ROTA DEPOIS
 -----------------------------------
   PATCH /api/questoes/proximo-modulo
 -----------------------------------
@@ -189,7 +243,7 @@ router.patch('/proximo-modulo', authMiddleware, async function (req, res) {
       })
     }
 
-    const exame = await updateProximoModulo(
+    const exame = await insertProximoModulo(
       moduloAtual.id_exame,
       modulo,
       grupo,

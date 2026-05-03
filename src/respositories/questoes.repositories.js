@@ -167,21 +167,19 @@ async function findOutroGrupoAleatorio(usuarioId, moduloId) {
   return result.rows[0]?.grupo || null
 }
 
-async function updateProximaTentativa(idExame, grupo, tentativa) {
+async function insertProximaTentativa(idExame, grupo, tentativa) {
+  // Busca o exame atual para pegar id_modulo e id_usuario
+  const exameAtual = await pool.query(
+    `SELECT id_modulo, id_usuario FROM exames WHERE id_exame = $1`,
+    [idExame]
+  )
+  const { id_modulo, id_usuario } = exameAtual.rows[0]
+
   const result = await pool.query(
-    `
-      UPDATE exames 
-      SET 
-        grupo = $1, 
-        tentativa = $2 
-      WHERE id_exame = $3 
-      RETURNING 
-        id_exame, 
-        id_modulo, 
-        grupo, 
-        tentativa
-    `,
-    [grupo, tentativa, idExame]
+    `INSERT INTO exames (id_modulo, id_usuario, grupo, tentativa)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id_exame, id_modulo, grupo, tentativa`,
+    [id_modulo, id_usuario, grupo, tentativa]
   )
   return result.rows[0] || null
 }
@@ -212,51 +210,63 @@ async function findProximoModuloByUsuario(idUsuario) {
   return result.rows[0]?.id_modulo || null
 }
 
-async function updateProximoModulo(idExame, modulo, grupo, tentativa) {
-  const result = await pool.query(
-    ` 
-      UPDATE exames 
-      SET 
-        id_modulo = $1, 
-        grupo = $2, 
-        tentativa = $3 
-      WHERE id_exame = $4 
-      RETURNING 
-        id_exame, 
-        id_modulo, 
-        id_usuario, 
-        grupo, 
-        tentativa 
-    `,
-    [modulo, grupo, tentativa, idExame]
+async function insertProximoModulo(idExame, modulo, grupo, tentativa) {
+  const exameAtual = await pool.query(
+    `SELECT id_usuario FROM exames WHERE id_exame = $1`,
+    [idExame]
   )
+  const { id_usuario } = exameAtual.rows[0]
 
+  const result = await pool.query(
+    `INSERT INTO exames (id_modulo, id_usuario, grupo, tentativa)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id_exame, id_modulo, id_usuario, grupo, tentativa`,
+    [modulo, id_usuario, grupo, tentativa]
+  )
   return result.rows[0] || null
 }
 
 async function findExamesByUsuario(usuarioId) {
   const result = await pool.query(
     `
-    SELECT 
-      e.id_modulo AS nivel,
-      CASE 
-        WHEN COUNT(r.id_resposta) > 0 THEN e.tentativa
-        ELSE e.tentativa - 1
-      END AS tentativas_usadas,
-      COALESCE(MAX(score.pct), 0) AS melhor_nota,
-      CASE WHEN COALESCE(MAX(score.pct), 0) >= 70 THEN true ELSE false END AS aprovado
-    FROM exames e
-    LEFT JOIN respostas r ON r.id_exame = e.id_exame
-    LEFT JOIN (
       SELECT 
-        r.id_exame, 
-        ROUND((SUM(r.nota)::numeric / NULLIF(COUNT(r.id_questao), 0)) * 100) as pct
-      FROM respostas r
-      GROUP BY r.id_exame
-    ) score ON score.id_exame = e.id_exame
-    WHERE e.id_usuario = $1
-    GROUP BY e.id_modulo, e.id_exame, e.tentativa
-    ORDER BY e.id_modulo
+        e.id_modulo AS nivel,
+        COUNT(DISTINCT e.id_exame) AS tentativas_iniciadas,
+        COUNT(DISTINCT CASE 
+          WHEN (
+            SELECT COUNT(*) FROM respostas r2 WHERE r2.id_exame = e.id_exame
+          ) = (
+            SELECT COUNT(*) FROM questoes q2 
+            WHERE q2.id_modulo = e.id_modulo 
+            AND q2.grupo IS NOT DISTINCT FROM e.grupo
+          ) THEN e.id_exame 
+        END) AS tentativas_usadas,
+        COALESCE(MAX(score.pct), 0) AS melhor_nota,
+        BOOL_OR(
+          (
+            SELECT COUNT(*) FROM respostas r2 WHERE r2.id_exame = e.id_exame
+          ) = (
+            SELECT COUNT(*) FROM questoes q2 
+            WHERE q2.id_modulo = e.id_modulo 
+            AND q2.grupo IS NOT DISTINCT FROM e.grupo
+          )
+        ) AS aprovado
+      FROM exames e
+      LEFT JOIN (
+        SELECT 
+          r.id_exame,
+          ROUND((SUM(r.nota)::numeric / NULLIF(COUNT(r.id_questao), 0)) * 100) AS pct
+        FROM respostas r
+        INNER JOIN exames ex ON ex.id_exame = r.id_exame
+        INNER JOIN questoes q 
+          ON q.id_modulo = ex.id_modulo 
+          AND q.grupo IS NOT DISTINCT FROM ex.grupo
+        GROUP BY r.id_exame
+        HAVING COUNT(DISTINCT r.id_questao) = COUNT(DISTINCT q.id_questao)
+      ) score ON score.id_exame = e.id_exame
+      WHERE e.id_usuario = $1
+      GROUP BY e.id_modulo
+      ORDER BY e.id_modulo
     `,
     [usuarioId]
   )
@@ -266,10 +276,15 @@ async function findExamesByUsuario(usuarioId) {
 async function countQuestoesRespondidasByUsuario(usuarioId) {
   const result = await pool.query(
     `
-    SELECT COUNT(DISTINCT r.id_questao) as total
-    FROM respostas r
-    INNER JOIN exames e ON e.id_exame = r.id_exame
-    WHERE e.id_usuario = $1
+      WITH primeiro_exame_por_modulo AS (
+        SELECT DISTINCT ON (id_modulo) id_exame
+        FROM exames
+        WHERE id_usuario = $1
+        ORDER BY id_modulo, id_exame ASC  -- 👈 ASC pega o primeiro
+      )
+      SELECT COUNT(r.id_resposta) as total
+      FROM respostas r
+      INNER JOIN primeiro_exame_por_modulo p ON p.id_exame = r.id_exame
     `,
     [usuarioId]
   )
@@ -284,9 +299,9 @@ module.exports = {
   usuarioConcluiuModuloAtual,
   findModuloAtualByUsuario,
   findOutroGrupoAleatorio,
-  updateProximaTentativa,
+  insertProximaTentativa,
   findProximoModuloByUsuario,
-  updateProximoModulo,
+  insertProximoModulo,
   findExamesByUsuario,
   countQuestoesRespondidasByUsuario
 }

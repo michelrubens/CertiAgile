@@ -20,6 +20,7 @@ async function init() {
     const resExames = await apiFetch('/api/exames')
     if (!resExames) return
     const exames = await resExames.json()
+    console.log('exames:', exames)
 
     // Progresso do usuário
     const resProgresso = await apiFetch('/api/questoes/progresso')
@@ -41,14 +42,15 @@ function renderPerfil(usuario, exames) {
 
   // Cada nível tem 2 tentativas máximas
   // Tentativas restantes = (2 * níveis com exame) - tentativas usadas
-  const totalRestantes = exames.reduce(
-    (acc, e) => acc + (2 - Number(e.tentativas_usadas ?? 0)),
-    0
-  )
   const totalUsadas = exames.reduce(
     (acc, e) => acc + Number(e.tentativas_usadas ?? 0),
     0
   )
+  const totalRestantes = exames.reduce(
+    (acc, e) => acc + (2 - Number(e.tentativas_usadas ?? 0)),
+    0
+  )
+  const totalConcluidos = exames.filter((e) => e.aprovado).length
 
   document.getElementById('sidebar-nome').textContent =
     usuario.nome?.split(' ')[0] ?? '—'
@@ -59,6 +61,10 @@ function renderPerfil(usuario, exames) {
   document.getElementById('profile-nivel-tag').textContent =
     `Nível ${usuario.nivel_atual ?? '—'}`
   document.getElementById('stat-tentativas').textContent = totalRestantes
+  document.getElementById('label-tentativas').textContent =
+    totalRestantes === 1 ? 'Tentativa' : 'Tentativas'
+  document.getElementById('label-restantes').textContent =
+    totalRestantes === 1 ? 'Restante' : 'Restantes'
 
   // Pinta as bolinhas: verde = usada, cinza = disponível
   const dots = document.querySelectorAll('#tentativas-dots .dot')
@@ -66,8 +72,11 @@ function renderPerfil(usuario, exames) {
     dot.classList.toggle('usada', i < totalUsadas)
   })
 
-  document.getElementById('stat-aprovacoes').textContent =
-    usuario.total_aprovacoes ?? '—'
+  document.getElementById('stat-aprovacoes').textContent = totalConcluidos
+  document.getElementById('label-niveis').textContent =
+    totalConcluidos === 1 ? 'Nível' : 'Níveis'
+  document.getElementById('label-concluidos').textContent =
+    totalConcluidos === 1 ? 'Concluído' : 'Concluídos'
 }
 
 function renderProgresso(exames, progresso) {
@@ -83,7 +92,7 @@ function renderProgresso(exames, progresso) {
   document.getElementById('progress-hint').textContent =
     aprovados === 5
       ? 'Parabéns! Você concluiu todos os níveis.'
-      : `${respondidas} de ${total} questões respondidas — ${aprovados} de 5 níveis aprovados.`
+      : `${respondidas} de ${total} questões respondidas — ${aprovados} de 5 níveis concluídos.`
 }
 
 function renderNiveis(exames, nivelAtual) {
@@ -112,18 +121,35 @@ function renderNiveis(exames, nivelAtual) {
 
     const melhorNota =
       exame?.melhor_nota != null ? `${exame.melhor_nota}%` : '—'
-    const tentativasUsadas = exame?.tentativas_usadas ?? 0
+
+    const tentativasUsadas = Number(exame?.tentativas_usadas ?? 0)
+    const tentativasIniciadas = Number(exame?.tentativas_iniciadas ?? 0)
     const tentativasMax = 2
+    const temAndamento = tentativasIniciadas > tentativasUsadas
 
     let footerHTML = ''
     if (concluido) {
-      footerHTML = `<a href="/certificado" class="btn-level primary">Download Certificado</a>`
+      const temTentativaDisponivel = tentativasUsadas < tentativasMax
+      footerHTML = `
+        <span class="nivel-concluido-label">
+          <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1">check_circle</span>
+          Nível concluído
+        </span>
+        ${
+          temTentativaDisponivel
+            ? `
+          <button class="btn-level outline-green" onclick="window.location.href='/avaliacao'">
+            ${temAndamento ? 'Continuar tentativa' : 'Fazer nova tentativa'}
+          </button>`
+            : ''
+        }
+      `
     } else if (emProgresso) {
-      footerHTML = `<button class="btn-level primary" onclick="window.location.href='/avaliacao'">
-        ${tentativasUsadas === 0 ? 'Iniciar Avaliação' : 'Retomar Avaliação'}
-      </button>`
-    } else {
-      footerHTML = `<button class="btn-level outline" disabled>Bloqueado</button>`
+      footerHTML = `
+        <button class="btn-level primary" onclick="window.location.href='/avaliacao'">
+          ${temAndamento ? 'Continuar Avaliação' : 'Iniciar Avaliação'}
+        </button>
+      `
     }
 
     let statsHTML = ''
