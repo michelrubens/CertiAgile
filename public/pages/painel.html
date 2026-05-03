@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <link
       rel="icon"
       href="/assets/brand/certiagile-icon.svg"
@@ -9,6 +9,16 @@
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Painel — CertiAgile</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       body {
         visibility: hidden;
@@ -18,9 +28,201 @@
     <script>
       requireAuth()
     </script>
+
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/painel.css" />
   </head>
+
   <body>
-    <div>Painel</div>
+    <!-- ── Top Bar ───────────────────────────────────────────── -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="/painel" class="brand">
+          <svg
+            width="28"
+            height="28"
+            viewBox="20 25 90 90"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <rect x="20" y="25" width="90" height="90" rx="22" fill="#2563EB" />
+            <path
+              d="M45 72L62 88L88 52"
+              stroke="white"
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M62 88L92 58"
+              stroke="#10B981"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span class="logo">Certi<span class="logo-agile">Agile</span></span>
+        </a>
+        <div class="topbar-actions">
+          <button class="icon-btn" aria-label="Notificações">
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <a href="/perfil" class="icon-btn" aria-label="Perfil">
+            <span class="material-symbols-outlined">account_circle</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- ── Sidebar ─────────────────────────────────────────── -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-user">
+            <div class="avatar-wrap">
+              <div class="avatar-placeholder">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+            </div>
+            <div>
+              <p class="sidebar-username" id="sidebar-nome">Carregando...</p>
+              <p class="sidebar-level">
+                Nível <span id="sidebar-nivel">—</span>
+              </p>
+            </div>
+          </div>
+
+          <nav class="sidebar-nav">
+            <a href="/painel" class="nav-item active">
+              <span class="material-symbols-outlined">dashboard</span>
+              Painel
+            </a>
+            <a href="/historico" class="nav-item">
+              <span class="material-symbols-outlined">history</span>
+              Histórico
+            </a>
+            <a href="/certificado" class="nav-item">
+              <span
+                class="material-symbols-outlined"
+                style="font-variation-settings: 'FILL' 1"
+                >verified</span
+              >
+              Certificado
+            </a>
+          </nav>
+
+          <button
+            class="btn-iniciar"
+            onclick="window.location.href = '/avaliacao'"
+          >
+            <span class="material-symbols-outlined">play_arrow</span>
+            Iniciar Avaliação
+          </button>
+        </div>
+
+        <div class="sidebar-bottom">
+          <button class="nav-item nav-item-logout" id="btn-logout">
+            <span class="material-symbols-outlined">logout</span>
+            Sair
+          </button>
+        </div>
+      </aside>
+
+      <!-- ── Main ───────────────────────────────────────────── -->
+      <main class="main-content">
+        <div class="content-inner">
+          <!-- Profile card -->
+          <div class="card profile-card">
+            <div class="profile-left">
+              <div class="profile-avatar-wrap">
+                <div class="profile-avatar">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <span class="avatar-badge">
+                  <span class="material-symbols-outlined">check</span>
+                </span>
+              </div>
+              <div class="profile-info">
+                <h1 class="profile-name" id="profile-nome">—</h1>
+                <p class="profile-cpf" id="profile-cpf">CPF: —</p>
+                <div class="profile-tags">
+                  <span class="tag tag-level" id="profile-nivel-tag"
+                    >Nível —</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="stat">
+                <span class="stat-value" id="stat-tentativas">—</span>
+                <span class="stat-label">Tentativas</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value" id="stat-aprovacoes">—</span>
+                <span class="stat-label">Aprovações</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress card -->
+          <div class="card progress-card">
+            <p class="card-label">Progresso Geral</p>
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 160 160">
+                <circle class="ring-bg" cx="80" cy="80" r="70" />
+                <circle
+                  class="ring-fill"
+                  id="ring-fill"
+                  cx="80"
+                  cy="80"
+                  r="70"
+                  stroke-dasharray="440"
+                  stroke-dashoffset="440"
+                />
+              </svg>
+              <div class="ring-label">
+                <span class="ring-pct" id="ring-pct">0%</span>
+                <span class="ring-sub">concluído</span>
+              </div>
+            </div>
+            <p class="progress-hint" id="progress-hint">Carregando...</p>
+          </div>
+
+          <!-- Níveis -->
+          <div class="levels-section">
+            <div class="levels-header">
+              <h2 class="section-title">Status dos Níveis</h2>
+              <a href="/historico" class="link-ver">Ver Histórico</a>
+            </div>
+            <div class="levels-grid" id="levels-grid">
+              <!-- preenchido pelo JS -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ── Bottom Nav (mobile) ────────────────────────────────── -->
+    <nav class="bottom-nav">
+      <a href="/painel" class="bottom-nav-item active">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Painel</span>
+      </a>
+      <a href="/historico" class="bottom-nav-item">
+        <span class="material-symbols-outlined">history</span>
+        <span>Histórico</span>
+      </a>
+      <a href="/avaliacao" class="bottom-nav-item">
+        <span class="material-symbols-outlined">play_arrow</span>
+        <span>Avaliar</span>
+      </a>
+      <a href="/certificado" class="bottom-nav-item">
+        <span class="material-symbols-outlined">verified</span>
+        <span>Certificado</span>
+      </a>
+    </nav>
+
+    <script src="/js/painel.js"></script>
     <script>
       document.body.style.visibility = 'visible'
     </script>

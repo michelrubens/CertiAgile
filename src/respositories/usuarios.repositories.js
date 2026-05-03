@@ -100,9 +100,25 @@ async function updateUsuarioCpf(UsuarioId, cpf) {
 
 async function findUsuarioById(usuarioId) {
   const result = await pool.query(
-    `SELECT id_usuario, nome, email, cpf 
-      FROM usuarios 
-      WHERE id_usuario = $1`,
+    `
+    SELECT 
+      u.id_usuario, u.nome, u.email, u.cpf,
+      (SELECT id_modulo FROM exames WHERE id_usuario = u.id_usuario ORDER BY id_exame DESC LIMIT 1) as nivel_atual,
+      (SELECT COUNT(*) FROM exames WHERE id_usuario = u.id_usuario) as total_tentativas,
+      (
+        SELECT COUNT(*) 
+        FROM (
+          SELECT id_exame 
+          FROM respostas 
+          GROUP BY id_exame 
+          HAVING (SUM(nota)::float / COUNT(*)) * 100 >= 70
+        ) as aprovados
+        INNER JOIN exames e ON e.id_exame = aprovados.id_exame
+        WHERE e.id_usuario = u.id_usuario
+      ) as total_aprovacoes
+    FROM usuarios u
+    WHERE u.id_usuario = $1
+    `,
     [usuarioId]
   )
   return result.rows[0] || null

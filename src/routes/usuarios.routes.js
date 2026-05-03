@@ -51,6 +51,23 @@ router.post('/', async function (req, res) {
 
 /*
 -----------------------------------
+  GET /api/usuarios/me
+-----------------------------------
+curl -X GET http://localhost:3000/api/usuarios/me \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -H "Content-Type: application/json"
+-----------------------------------
+*/
+router.get('/me', authMiddleware, async function (req, res) {
+  const usuario = await findUsuarioById(req.usuario.id_usuario)
+  if (!usuario) {
+    return res.status(404).json({ message: 'Usuário não encontrado.' })
+  }
+  return res.status(200).json(usuario)
+})
+
+/*
+-----------------------------------
   PATCH /api/usuarios/cpf
 -----------------------------------
 curl -X PATCH http://localhost:3000/api/usuarios/cpf \

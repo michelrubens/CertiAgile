@@ -234,6 +234,31 @@ async function updateProximoModulo(idExame, modulo, grupo, tentativa) {
   return result.rows[0] || null
 }
 
+async function findExamesByUsuario(usuarioId) {
+  const result = await pool.query(
+    `
+    SELECT 
+      e.id_modulo AS nivel,
+      MAX(e.tentativa) AS tentativas_usadas,
+      COALESCE(MAX(score.pct), 0) AS melhor_nota,
+      CASE WHEN COALESCE(MAX(score.pct), 0) >= 70 THEN true ELSE false END AS aprovado
+    FROM exames e
+    LEFT JOIN (
+      SELECT 
+        r.id_exame, 
+        ROUND((SUM(r.nota)::numeric / NULLIF(COUNT(r.id_questao), 0)) * 100) as pct
+      FROM respostas r
+      GROUP BY r.id_exame
+    ) score ON score.id_exame = e.id_exame
+    WHERE e.id_usuario = $1
+    GROUP BY e.id_modulo
+    ORDER BY e.id_modulo
+    `,
+    [usuarioId]
+  )
+  return result.rows
+}
+
 module.exports = {
   findProximaQuestaoByUsuario,
   findQuestaoDoExameByUsuario,
@@ -244,5 +269,6 @@ module.exports = {
   findOutroGrupoAleatorio,
   updateProximaTentativa,
   findProximoModuloByUsuario,
-  updateProximoModulo
+  updateProximoModulo,
+  findExamesByUsuario
 }
