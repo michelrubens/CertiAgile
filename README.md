@@ -13,6 +13,7 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 - **Gestão de Usuários:** Cadastro, autenticação (JWT) e atualização de perfil (nome, CPF, e-mail e senha).
 - **Progressão por Níveis:** Banco de questões organizado em 5 níveis de dificuldade (do básico ao avançado).
 - **Exames Aleatórios:** Sistema que gera provas dinâmicas com questões sorteadas do banco.
+- **Dashboard de Desempenho:** Visualização de progresso, notas e tentativas por módulo.
 - **Banco de Questões:** Organizado por módulos e categorias de metodologias ágeis.
 - **Histórico de Respostas:** Armazenamento detalhado de cada tentativa para fins de correção e nota.
 - **Inicialização Automatizada:** Scripts SQL prontos para criar o schema e popular o banco de dados (seeds).
@@ -30,16 +31,16 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 ### Frontend
 
 - **Arquitetura:** Vanilla JavaScript (sem frameworks), HTML5 e CSS3.
-- **Design System:** Uso de variáveis CSS para padronização de cores, espaçamentos e sombras.
+- **Design System:** Sistema de tokens via variáveis CSS para cores, tipografia e elevações.
 - **Ícones:** [Material Symbols](https://fonts.google.com/icons) do Google.
 - **Segurança:** Sistema de proteção de rotas (Guest/Auth) e persistência de token via `localStorage`.
 
 ## 🔮 Próximos Passos (Roadmap)
 
 - [x] **Interface Web:** Estruturação das páginas de Login e Cadastro com validações dinâmicas.
-- [ ] **Módulo de Tentativas:** Desenvolvimento da tela de questões e cronômetro.
-- [ ] **Emissão de Certificados:** Geração de certificados digitais em PDF com base no desempenho do aluno.
-- [ ] **Dashboards:** Visualização gráfica do progresso do usuário nos níveis de certificação.
+- [x] **Dashboards:** Painel do aluno com indicadores de progresso e status dos módulos.
+- [ ] **Módulo de Avaliação:** Desenvolvimento da tela de questões e cronômetro.
+- [ ] **Emissão de Certificados:** Geração de PDF e validação pública via hash.
 
 ## 📋 Pré-requisitos
 
@@ -109,17 +110,24 @@ Rotas principais para acessar a interface da aplicação:
 ### Usuários
 
 - `POST /api/usuarios` - Cadastro de novo usuário.
+- `GET /api/usuarios/me` - Retorna os dados do perfil logado (Requer Token).
 - `PATCH /api/usuarios/nome` - Atualiza o nome (Requer Token).
 - `PATCH /api/usuarios/cpf` - Atualiza o CPF (Requer Token).
 - `PATCH /api/usuarios/email` - Atualiza o e-mail (Requer Token).
 - `PATCH /api/usuarios/senha` - Atualiza a senha (Requer Token).
 
-### Questões
+### Questões & Progresso
 
 - `GET /api/questoes/proxima-questao` - Busca a próxima questão pendente do questionário (Requer Token).
 - `POST /api/questoes/responder` - Registra a resposta de uma questão (Requer Token).
 - `PATCH /api/questoes/proxima-tentativa` - Reinicia o grupo de questões para uma nova tentativa no módulo atual (Requer Token).
 - `PATCH /api/questoes/proximo-modulo` - Atualiza o progresso do usuário para o próximo nível de certificação (Requer Token).
+- `GET /api/questoes/progresso` - Retorna o percentual de conclusão geral (Requer Token).
+
+### Exames & Certificados
+
+- `GET /api/exames` - Lista o histórico e status de todos os módulos/níveis (Requer Token).
+- `GET /api/certificados/hash/:hash` - Consulta a validade e dados de um certificado (Público).
 
 ## 📂 Estrutura de Pastas
 
