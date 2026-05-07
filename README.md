@@ -11,13 +11,13 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 ## 🚀 Funcionalidades
 
 - **Gestão de Usuários:** Cadastro, autenticação (JWT) e atualização de perfil (nome, CPF, e-mail e senha).
-- **Progressão por Níveis:** Banco de questões organizado em 5 níveis de dificuldade (do básico ao avançado).
-- **Exames Aleatórios:** Sistema que gera provas dinâmicas com questões sorteadas do banco.
-- **Dashboard de Desempenho:** Visualização de progresso, notas e tentativas por módulo.
+- **Progressão por Níveis:** Certificação dividida em 5 níveis (Básico ao Master). O avanço para o próximo nível bloqueia edições ou novas tentativas nos níveis anteriores.
+- **Sistema de Tentativas:** Até 2 tentativas por nível. Caso o usuário opte por avançar de nível, as tentativas restantes do nível anterior são invalidadas.
+- **Dashboard Inteligente:** Botões dinâmicos que alternam entre "Iniciar", "Continuar" e "Fazer nova tentativa" conforme o progresso real e o estado da sessão.
+- **Sincronização de Estado:** Persistência do progresso da avaliação. Se a sessão cair, o usuário retoma exatamente da questão onde parou.
 - **Banco de Questões:** Organizado por módulos e categorias de metodologias ágeis.
-- **Histórico de Respostas:** Armazenamento detalhado de cada tentativa para fins de correção e nota.
+- **Suporte a Mídia:** Suporte para exibição de imagens contextuais em questões complexas.
 - **Inicialização Automatizada:** Scripts SQL prontos para criar o schema e popular o banco de dados (seeds).
-- **Interface Responsiva:** Painéis otimizados para diferentes tamanhos de tela (Mobile e Desktop).
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -39,7 +39,7 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 
 - [x] **Interface Web:** Estruturação das páginas de Login e Cadastro com validações dinâmicas.
 - [x] **Dashboards:** Painel do aluno com indicadores de progresso e status dos módulos.
-- [ ] **Módulo de Avaliação:** Desenvolvimento da tela de questões e cronômetro.
+- [x] **Módulo de Avaliação:** Sistema de questões, lógica de tentativas e sincronização de progresso.
 - [ ] **Emissão de Certificados:** Geração de PDF e validação pública via hash.
 
 ## 📋 Pré-requisitos
@@ -121,8 +121,9 @@ Rotas principais para acessar a interface da aplicação:
 - `GET /api/questoes/proxima-questao` - Busca a próxima questão pendente do questionário (Requer Token).
 - `POST /api/questoes/responder` - Registra a resposta de uma questão (Requer Token).
 - `PATCH /api/questoes/proxima-tentativa` - Reinicia o grupo de questões para uma nova tentativa no módulo atual (Requer Token).
-- `PATCH /api/questoes/proximo-modulo` - Atualiza o progresso do usuário para o próximo nível de certificação (Requer Token).
+- `PATCH /api/questoes/pular-tentativa` - Avança para o próximo módulo sem concluir as tentativas restantes (Requer Token).
 - `GET /api/questoes/progresso` - Retorna o percentual de conclusão geral (Requer Token).
+- `GET /api/questoes/modulo-atual` - Retorna os metadados do módulo e tentativa em curso (Requer Token).
 
 ### Exames & Certificados
 
