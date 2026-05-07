@@ -53,8 +53,7 @@ function renderQuestao(questao, index) {
   // Imagem
   const imgWrap = document.getElementById('questao-imagem-wrap')
   if (questao.imagem) {
-    document.getElementById('questao-imagem').src =
-      `/assets/images/${questao.imagem}`
+    document.getElementById('questao-imagem').src = questao.imagem
     imgWrap.classList.remove('hidden')
   } else {
     imgWrap.classList.add('hidden')
