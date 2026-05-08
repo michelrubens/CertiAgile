@@ -153,11 +153,27 @@ async function initCertificado() {
         `
 
     mostrarEstado('state-cert') // Exibe o certificado
+    ajustarTamanhoNome() // Ajusta o tamanho da fonte do nome para caber na linha
   } catch (err) {
     console.error('Erro ao carregar dados do certificado:', err)
     document.getElementById('erro-msg').textContent =
       err.message || 'Ocorreu um erro ao carregar o certificado.'
     mostrarEstado('state-erro')
+  }
+}
+
+/**
+ * Ajusta dinamicamente o tamanho da fonte do nome do aluno
+ * para que ele caiba em uma única linha sem transbordar.
+ */
+function ajustarTamanhoNome() {
+  const el = document.getElementById('cert-nome')
+  if (!el) return
+
+  let fontSize = 48 // 5xl é equivalente a 48px (3rem)
+  while (el.scrollWidth > el.offsetWidth && fontSize > 12) {
+    fontSize--
+    el.style.fontSize = fontSize + 'px'
   }
 }
 

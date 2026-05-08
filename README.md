@@ -13,11 +13,13 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 - **Gestão de Usuários:** Cadastro, autenticação (JWT) e atualização de perfil (nome, CPF, e-mail e senha).
 - **Progressão por Níveis:** Certificação dividida em 5 níveis (Básico ao Master). O avanço para o próximo nível bloqueia edições ou novas tentativas nos níveis anteriores.
 - **Sistema de Tentativas:** Até 2 tentativas por nível. Caso o usuário opte por avançar de nível, as tentativas restantes do nível anterior são invalidadas.
-- **Dashboard Inteligente:** Botões dinâmicos que alternam entre "Iniciar", "Continuar" e "Fazer nova tentativa" conforme o progresso real e o estado da sessão.
+- **Dashboard Inteligente:** Botões dinâmicos que alternam entre "Iniciar", "Continuar", "Fazer nova tentativa" e "Emitir Certificado" conforme o progresso real.
 - **Sincronização de Estado:** Persistência do progresso da avaliação. Se a sessão cair, o usuário retoma exatamente da questão onde parou.
 - **Banco de Questões:** Organizado por módulos e categorias de metodologias ágeis.
 - **Suporte a Mídia:** Suporte para exibição de imagens contextuais em questões complexas.
 - **Inicialização Automatizada:** Scripts SQL prontos para criar o schema e popular o banco de dados (seeds).
+- **Emissão de Certificados:** Layout profissional em proporção 4:3 (A4), com ajuste dinâmico de fontes, marca d'água e QR Code para validação pública de autenticidade.
+- **Geração de PDF:** Exportação de certificados em alta definição preservando exatamente o layout visualizado na web.
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -30,17 +32,18 @@ O **CertiAgile** é uma plataforma em desenvolvimento focada na consolidação d
 
 ### Frontend
 
-- **Arquitetura:** Vanilla JavaScript (sem frameworks), HTML5 e CSS3.
-- **Design System:** Sistema de tokens via variáveis CSS para cores, tipografia e elevações.
+- **Arquitetura:** Vanilla JavaScript (sem frameworks), HTML5 e CSS3 (com Tailwind CSS para utilitários).
+- **Design System:** Sistema de tokens via variáveis CSS para consistência de branding.
 - **Ícones:** [Material Symbols](https://fonts.google.com/icons) do Google.
 - **Segurança:** Sistema de proteção de rotas (Guest/Auth) e persistência de token via `localStorage`.
+- **PDF Engine:** html2pdf.js para renderização fiel de documentos.
 
 ## 🔮 Próximos Passos (Roadmap)
 
 - [x] **Interface Web:** Estruturação das páginas de Login e Cadastro com validações dinâmicas.
 - [x] **Dashboards:** Painel do aluno com indicadores de progresso e status dos módulos.
 - [x] **Módulo de Avaliação:** Sistema de questões, lógica de tentativas e sincronização de progresso.
-- [ ] **Emissão de Certificados:** Geração de PDF e validação pública via hash.
+- [x] **Emissão de Certificados:** Geração de PDF e validação pública via hash/QR Code.
 
 ## 📋 Pré-requisitos
 
