@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Certificado de Conclusão | CertiAgile</title>
+    <!-- Tailwind CSS CDN - para o layout base -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Custom Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Global e Custom CSS -->
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/certificado.css" />
+    <!-- html2pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+  <body
+    class="bg-background font-body-md text-on-background flex flex-col items-center py-8"
+  >
+    <!-- Botões de Ação (não visíveis na impressão) -->
+    <div class="no-print flex gap-4 mb-8 hidden">
+      <button
+        id="btn-download-pdf"
+        class="bg-primary text-white px-8 py-3 rounded-xl font-button text-button shadow-lg hover:bg-primary-fixed-variant transition-all flex items-center justify-center gap-2 group"
+      >
+        <span class="material-symbols-outlined" data-icon="download"
+          >download</span
+        >
+        Baixar PDF
+      </button>
+      <a
+        href="/painel"
+        class="bg-gray-200 text-gray-800 px-8 py-3 rounded-xl font-button text-button shadow-lg hover:bg-gray-300 transition-all flex items-center justify-center gap-2 group"
+      >
+        Voltar ao Painel
+      </a>
+    </div>
+
+    <!-- Área do Documento do Certificado (para PDF) -->
+    <div
+      id="cert-document-area"
+      class="w-[1056px] h-[792px] flex-shrink-0 hidden"
+    >
+      <div
+        class="bg-surface-container-lowest p-8 md:p-12 shadow-md rounded-xl relative overflow-hidden certificate-border w-full h-full"
+      >
+        <div class="watermark absolute inset-0"></div>
+        <!-- Conteúdo do Certificado -->
+        <div
+          class="relative z-10 flex flex-col items-center text-center space-y-6 h-full justify-between"
+        >
+          <div class="w-20 h-20">
+            <svg class="fill-primary" viewbox="0 0 100 100">
+              <path
+                d="M50 5L15 25V50C15 70 30 88 50 95C70 88 85 70 85 50V25L50 5ZM50 15L75 29V50C75 64 64 78 50 84C36 78 25 64 25 50V29L50 15ZM38 55L45 62L62 45L66 49L45 70L34 59L38 55Z"
+              ></path>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h3
+              class="text-surface-variant font-label-md uppercase tracking-[0.2em] text-sm"
+            >
+              Certificado de Conclusão
+            </h3>
+            <p class="text-on-surface font-body-md italic text-sm">
+              Concedido orgulhosamente a:
+            </p>
+          </div>
+          <div class="space-y-1">
+            <h2
+              id="cert-nome"
+              class="font-display text-h2 text-on-surface border-b border-outline-variant pb-2 px-8"
+            >
+              Carregando...
+            </h2>
+            <div
+              class="flex gap-4 justify-center text-on-surface-variant text-body-sm pt-2"
+            >
+              <span id="cert-cpf">CPF: ---</span>
+              <span
+                class="w-1 h-1 rounded-full bg-outline-variant self-center"
+              ></span>
+              <span id="cert-email">email@example.com</span>
+            </div>
+          </div>
+          <p class="max-w-2xl font-body-md text-on-surface-variant">
+            Pela excelência demonstrada e conclusão satisfatória do programa
+            avançado de
+            <span class="text-primary font-bold"
+              >Gestão Ágil de Alta Performance</span
+            >, cumprindo todos os requisitos acadêmicos e técnicos exigidos por
+            esta instituição.
+          </p>
+          <!-- Seção de Desempenho por Nível -->
+          <div
+            class="w-full max-w-3xl mt-6 pt-6 border-t border-surface-container"
+          >
+            <h4
+              class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-4"
+            >
+              Desempenho por Nível
+            </h4>
+            <div
+              id="cert-niveis-container"
+              class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 text-center"
+            >
+              <!-- Conteúdo dinâmico será inserido aqui -->
+            </div>
+          </div>
+          <div
+            class="w-full flex justify-between items-end mt-8 pt-8 border-t border-surface-container"
+          >
+            <div class="text-left">
+              <p
+                class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest"
+              >
+                Emitido em:
+              </p>
+              <p
+                id="cert-data-emissao"
+                class="text-on-surface font-semibold text-sm"
+              >
+                Carregando Data
+              </p>
+            </div>
+            <div class="text-center">
+              <img
+                alt="Assinatura Digital"
+                class="h-10 w-auto grayscale opacity-80 mx-auto"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHTJvwj_oCMFPtdOzIypTtgdHreDRRBbjEcOY42724WASF03LE4uG_Utvt_193qpbm4mYRDjVMu7TcTzaZBBKm8ItvH_RU3DyuEW7_Hj0JLDy2fZCCFzrMqaz0GdcG79qPDzNx1vIGNLXH1tb7kZUq9pMimo9_fkfP-WOH6MEv2bWE6nNiZSg4P7mkHySPESOw55SCq8ipZoX1sThbbeWuKOpbvcA-wQ4-YpxwN3gnIVfIgxkjzixOPjcnL8WAbsHFF9iiAMGoEeI"
+              />
+              <p class="text-[9px] text-on-surface-variant mt-1">
+                Diretor de Certificação
+              </p>
+            </div>
+            <div class="text-right">
+              <div class="w-16 h-16 ml-auto">
+                <img
+                  id="cert-qrcode"
+                  class="w-full h-full hidden"
+                  alt="QR Code de Verificação"
+                />
+                <div
+                  id="qrcode-placeholder"
+                  class="w-full h-full bg-slate-100 rounded-lg flex items-center justify-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-on-surface-variant text-2xl"
+                    data-icon="qr_code_2"
+                    >qr_code_2</span
+                  >
+                </div>
+              </div>
+              <p
+                id="cert-hash"
+                class="text-[9px] text-on-surface-variant mt-1 font-mono"
+              >
+                ID: ---
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estados de Carregamento, Indisponível, Erro -->
+    <div
+      id="state-loading"
+      class="state flex flex-col items-center justify-center p-8"
+    >
+      <span class="material-symbols-outlined animate-spin text-4xl text-primary"
+        >progress_activity</span
+      >
+      <p class="mt-4 text-lg text-on-surface">Carregando certificado...</p>
+    </div>
+    <div
+      id="state-indisponivel"
+      class="state hidden flex flex-col items-center justify-center p-8"
+    >
+      <span class="material-symbols-outlined text-4xl text-error">cancel</span>
+      <p class="mt-4 text-lg text-on-surface text-center">
+        Certificado indisponível. Você precisa concluir todos os 5 níveis para
+        emitir seu certificado.
+      </p>
+      <a href="/painel" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg"
+        >Voltar ao Painel</a
+      >
+    </div>
+    <div
+      id="state-erro"
+      class="state hidden flex flex-col items-center justify-center p-8"
+    >
+      <span class="material-symbols-outlined text-4xl text-error">error</span>
+      <p id="erro-msg" class="mt-4 text-lg text-on-surface text-center">
+        Ocorreu um erro ao carregar o certificado.
+      </p>
+      <a href="/painel" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg"
+        >Voltar ao Painel</a
+      >
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/certificado.js"></script>
+  </body>
+</html>

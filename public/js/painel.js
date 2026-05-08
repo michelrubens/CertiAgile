@@ -29,7 +29,7 @@ async function init() {
 
     renderPerfil(usuario, exames)
     renderProgresso(exames, progresso)
-    renderNiveis(exames, usuario.nivel_atual ?? 1, progresso.respondidas)
+    renderNiveis(exames, usuario, progresso.respondidas)
   } catch (err) {
     console.error('Erro ao carregar painel:', err)
   }
@@ -71,6 +71,17 @@ function renderPerfil(usuario, exames) {
     dot.classList.toggle('usada', i < totalRestantes)
   })
 
+  // Atualiza o link de Certificações na sidebar com o hash do usuário
+  const certLinks = Array.from(
+    document.querySelectorAll('aside a, nav a, .nav-item')
+  ).filter((el) => {
+    const text = el.textContent.trim()
+    return text.includes('Certificações') || text.includes('Certificados')
+  })
+  certLinks.forEach((link) => {
+    link.href = `/certificado?hash=${usuario.certificado_hash || ''}`
+  })
+
   document.getElementById('stat-aprovacoes').textContent = totalConcluidos
   document.getElementById('label-niveis').textContent =
     totalConcluidos === 1 ? 'Nível' : 'Níveis'
@@ -94,7 +105,8 @@ function renderProgresso(exames, progresso) {
       : `${respondidas} de ${total} questões respondidas — ${aprovados} de 5 níveis concluídos.`
 }
 
-function renderNiveis(exames, nivelAtual, respondidas) {
+function renderNiveis(exames, usuario, respondidas) {
+  const nivelAtual = usuario.nivel_atual ?? 1
   const grid = document.getElementById('levels-grid')
   grid.innerHTML = ''
 
@@ -176,8 +188,8 @@ function renderNiveis(exames, nivelAtual, respondidas) {
               </button>`
           } else {
             actionsHTML += `
-              <button class="btn-level primary" onclick="finalizarAvaliacao()">
-                Finalizar Avaliação
+              <button class="btn-level primary" onclick="window.location.href='/certificado?hash=${usuario.certificado_hash || ''}'">
+                Emitir Certificado
               </button>`
           }
         }
@@ -282,12 +294,6 @@ async function iniciarNovaTentativa() {
   } catch (err) {
     console.error('Erro ao iniciar nova tentativa:', err)
   }
-}
-
-function finalizarAvaliacao() {
-  alert(
-    'Parabéns! Você concluiu a certificação CertiAgile. Verifique seu painel para emitir seu certificado.'
-  )
 }
 
 init()

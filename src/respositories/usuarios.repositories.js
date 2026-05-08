@@ -77,7 +77,8 @@ async function createUsuario(nome, cpf, email, senha) {
       id_usuario: usuario.id_usuario,
       nome: usuario.nome,
       email: usuario.email,
-      cpf: usuario.cpf
+      cpf: usuario.cpf,
+      certificado_hash: usuario.certificado_hash
     }
   } catch (error) {
     await client.query('ROLLBACK')
@@ -116,6 +117,7 @@ async function findUsuarioById(usuarioId) {
         INNER JOIN exames e ON e.id_exame = aprovados.id_exame
         WHERE e.id_usuario = u.id_usuario
       ) as total_aprovacoes
+      , u.certificado_hash
     FROM usuarios u
     WHERE u.id_usuario = $1
     `,
@@ -126,7 +128,7 @@ async function findUsuarioById(usuarioId) {
 
 async function findUsuarioByCpfAndSenha(cpf, senha) {
   const result = await pool.query(
-    `SELECT id_usuario, nome, email, cpf, senha
+    `SELECT id_usuario, nome, email, cpf, senha, certificado_hash
       FROM usuarios 
       WHERE cpf = $1`,
     [cpf]
@@ -146,7 +148,8 @@ async function findUsuarioByCpfAndSenha(cpf, senha) {
     id_usuario: usuario.id_usuario,
     nome: usuario.nome,
     email: usuario.email,
-    cpf: usuario.cpf
+    cpf: usuario.cpf,
+    certificado_hash: usuario.certificado_hash
   }
 }
 

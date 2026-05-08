@@ -52,6 +52,10 @@ app.get('/avaliacao', function (_req, res) {
   res.sendFile(path.join(pagesPath, 'avaliacao.html'))
 })
 
+app.get('/certificado', function (_req, res) {
+  res.sendFile(path.join(pagesPath, 'certificado.html'))
+})
+
 app.use(function (_req, res) {
   res.status(404).redirect('not-found.html')
 })

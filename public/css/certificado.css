@@ -1,0 +1,69 @@
+/* Custom styles for certificate.html */
+
+/* Estilos do Material Symbols (mantidos do HTML original) */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Borda do Certificado (mantida do HTML original) */
+.certificate-border {
+  border: 20px solid transparent;
+  border-image: linear-gradient(to bottom right, #006c49, #0051d5) 1;
+  box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura/altura */
+}
+
+/* Marca d'água (mantida do HTML original) */
+.watermark {
+  background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBmOVk8UCrT4u3z_YAxuV3zltCl6qkHmx3nZdAvDYDvZx64AdtHlN7LDlknwXQmtN6FnZ16tD_1SoZB8T5AYDoeL8X0nlurAzTa92UwZzmtZ5LXcI8IhMUJfKwf1DZmPxLK1UOLeQKxLzX1TeqWXlkIiRKdkfn0Z_J_xpOQMFEzN3aKR1NzgolVb_7Rk22z5HLAnC5lD6HMtlfDz5dGG5uPF_SW-FQxISab-gmb4eI-4Vgs6NwQl1BhSh3fGzlXIazUnCmkDtCREKI);
+  background-size: cover;
+  opacity: 0.03;
+  pointer-events: none;
+  background-position: center; /* Centraliza a marca d'água */
+}
+
+/* Estilos para os estados de carregamento/erro */
+.state {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 100;
+  display: flex; /* Padrão para flex, a classe 'hidden' irá sobrescrever */
+}
+
+.state.hidden {
+  display: none;
+}
+
+/* Estilos para impressão */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+  #cert-document-area {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .certificate-border {
+    border: none !important;
+    padding: 0 !important;
+  } /* Remove a borda para impressão */
+  .watermark {
+    opacity: 0.05;
+  } /* Torna a marca d'água um pouco mais visível na impressão */
+}
